@@ -1,0 +1,72 @@
+name: 'Deploy to Production'
+
+on:
+  workflow_run:
+    workflows: ['CI - Build and Test']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - staging
+        - production
+
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+      
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install Dependencies
+      run: npm ci
+      
+    - name: Pre-deployment Health Check
+      run: npm run test:health
+      
+    - name: Build Multi-Architecture Images
+      run: |
+        # Build for AMD64 and ARM64
+        docker buildx create --use
+        docker buildx build --platform linux/amd64,linux/arm64           -t ghcr.io/asphiax/master-container-mcp:latest           -t ghcr.io/asphiax/master-container-mcp:${{ github.sha }}           --push .
+          
+    - name: Deploy with Health Validation
+      run: |
+        # Run deployment script with health checks
+        chmod +x ./deploy.sh
+        ./deploy.sh production
+        
+    - name: Post-deployment Verification
+      run: |
+        # Verify deployment success
+        sleep 30
+        curl -f http://localhost:3003/health || exit 1
+        npm run test:integration
+        
+    - name: Rollback on Failure
+      if: failure()
+      run: |
+        echo 'Deployment failed, initiating rollback...'
+        docker-compose down
+        docker-compose up -d --health-cmd='curl -f http://localhost:3001/health || exit 1'
