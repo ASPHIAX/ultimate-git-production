@@ -8,8 +8,8 @@ RUN apk add --no-cache python3 py3-pip make g++
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --only=production
+# Install dependencies (using modern npm syntax)
+RUN npm ci --omit=dev
 
 # Clean up build dependencies to reduce image size
 RUN apk del python3 py3-pip make g++
@@ -24,6 +24,10 @@ USER nodejs
 
 # Expose ports
 EXPOSE 3000 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
 
 # Start the server
 CMD ["npm", "start"]
