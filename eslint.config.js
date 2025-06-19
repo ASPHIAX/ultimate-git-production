@@ -1,7 +1,10 @@
 // ESLint v9 Flat Config - Enterprise Rules (25+ Rules)
 // MASTER-CONTAINER-MCP Enterprise Quality Enforcement
 
+import js from '@eslint/js';
+
 export default [
+  js.configs.recommended,
   {
     files: ['**/*.js'],
     languageOptions: {
