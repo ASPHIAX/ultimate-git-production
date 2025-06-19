@@ -2,11 +2,17 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Install build dependencies for native modules
+RUN apk add --no-cache python3 py3-pip make g++
+
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install --only=production
+
+# Clean up build dependencies to reduce image size
+RUN apk del python3 py3-pip make g++
 
 # Copy source code
 COPY . .
