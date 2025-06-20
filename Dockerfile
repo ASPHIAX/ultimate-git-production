@@ -9,6 +9,7 @@ RUN apk add --no-cache python3 py3-pip make g++
 COPY package*.json ./
 
 # Install dependencies (using modern npm syntax)
+ENV DOCKER_BUILD=true
 RUN npm ci --omit=dev
 
 # Clean up build dependencies to reduce image size
