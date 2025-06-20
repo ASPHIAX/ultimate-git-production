@@ -61,18 +61,18 @@ export async function handleToolCall(data, tools) {
 
   // Delegate to specific tool handlers
   switch (toolName) {
-    case 'echo':
-      return await executeEchoTool(toolArgs, data.id);
-    case 'calculate':
-      return await executeCalculateTool(toolArgs, data.id);
-    case 'get_server_info':
-      return await executeServerInfoTool(data.id);
-    default:
-      return {
-        jsonrpc: '2.0',
-        id: data.id,
-        error: { code: -32601, message: `Unknown tool: ${toolName}` }
-      };
+  case 'echo':
+    return await executeEchoTool(toolArgs, data.id);
+  case 'calculate':
+    return await executeCalculateTool(toolArgs, data.id);
+  case 'get_server_info':
+    return await executeServerInfoTool(data.id);
+  default:
+    return {
+      jsonrpc: '2.0',
+      id: data.id,
+      error: { code: -32601, message: `Unknown tool: ${toolName}` }
+    };
   }
 }
 

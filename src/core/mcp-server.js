@@ -11,14 +11,14 @@ export class MCPWebSocketServer {
     this.clients = new Map();
     this.tools = new Map();
     this.resources = new Map();
-    
+
     this.initializeMCPCapabilities();
   }
 
   initializeMCPCapabilities() {
     // Initialize tools from module
     initializeMCPTools();
-    
+
     // Copy tools from module
     this.tools = new Map();
     this.tools.set('echo', {
@@ -62,24 +62,24 @@ export class MCPWebSocketServer {
   async handleMessage(ws, data) {
     try {
       switch (data.method) {
-        case 'initialize':
-          return await handleInitialize(data, ws, this.clients);
-        case 'tools/list':
-          return await handleToolsList(data, this.tools);
-        case 'tools/call':
-          return await handleToolCall(data, this.tools);
-        case 'resources/list':
-          return {
-            jsonrpc: '2.0',
-            id: data.id,
-            result: { resources: Array.from(this.resources.values()) }
-          };
-        default:
-          return {
-            jsonrpc: '2.0',
-            id: data.id,
-            error: { code: -32601, message: `Method not found: ${data.method}` }
-          };
+      case 'initialize':
+        return await handleInitialize(data, ws, this.clients);
+      case 'tools/list':
+        return await handleToolsList(data, this.tools);
+      case 'tools/call':
+        return await handleToolCall(data, this.tools);
+      case 'resources/list':
+        return {
+          jsonrpc: '2.0',
+          id: data.id,
+          result: { resources: Array.from(this.resources.values()) }
+        };
+      default:
+        return {
+          jsonrpc: '2.0',
+          id: data.id,
+          error: { code: -32601, message: `Method not found: ${data.method}` }
+        };
       }
     } catch (error) {
       return {

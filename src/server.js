@@ -18,7 +18,7 @@ class MCPWebSocketServer {
     this.clients = new Map();
     this.tools = new Map();
     this.resources = new Map();
-    
+
     this.initializeMCPCapabilities();
   }
 
@@ -35,7 +35,7 @@ class MCPWebSocketServer {
     });
 
     this.tools.set('get_server_info', {
-      name: 'get_server_info', 
+      name: 'get_server_info',
       description: 'Get information about this MCP server',
       inputSchema: { type: 'object', properties: {} }
     });
@@ -84,7 +84,7 @@ class MCPWebSocketServer {
           }).required()
         }).required()
       }),
-      
+
       toolCall: Joi.object({
         jsonrpc: Joi.string().valid('2.0').required(),
         id: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
@@ -101,22 +101,22 @@ class MCPWebSocketServer {
   async handleMCPMethod(method, params, id) {
     try {
       switch (method) {
-        case 'initialize':
-          return this.handleInitialize(params, id);
-        case 'tools/list':
-          return this.handleToolsList(id);
-        case 'tools/call':
-          return this.handleToolCall(params, id);
-        case 'resources/list':
-          return this.handleResourcesList(id);
-        case 'resources/read':
-          return this.handleResourceRead(params, id);
-        default:
-          return {
-            jsonrpc: '2.0',
-            id,
-            error: { code: -32601, message: 'Method not found' }
-          };
+      case 'initialize':
+        return this.handleInitialize(params, id);
+      case 'tools/list':
+        return this.handleToolsList(id);
+      case 'tools/call':
+        return this.handleToolCall(params, id);
+      case 'resources/list':
+        return this.handleResourcesList(id);
+      case 'resources/read':
+        return this.handleResourceRead(params, id);
+      default:
+        return {
+          jsonrpc: '2.0',
+          id,
+          error: { code: -32601, message: 'Method not found' }
+        };
       }
     } catch (error) {
       return {
@@ -166,7 +166,7 @@ class MCPWebSocketServer {
 
   async handleToolCall(params, id) {
     const { name, arguments: args } = params;
-    
+
     if (!this.tools.has(name)) {
       return {
         jsonrpc: '2.0',
@@ -176,54 +176,54 @@ class MCPWebSocketServer {
     }
 
     switch (name) {
-      case 'echo':
-        return {
-          jsonrpc: '2.0',
-          id,
-          result: { content: [{ type: 'text', text: `Echo: ${args.message}` }] }
-        };
-      
-      case 'get_server_info':
-        return {
-          jsonrpc: '2.0',
-          id,
-          result: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify({
-                server: 'Ultimate MCP Server',
-                version: '1.0.0',
-                protocol: '2025-03-26',
-                tools: Array.from(this.tools.keys()),
-                resources: Array.from(this.resources.keys()),
-                clients: this.clients.size
-              }, null, 2)
-            }]
-          }
-        };
-      
-      case 'calculate':
-        const { operation, a, b } = args;
-        let result;
-        switch (operation) {
-          case 'add': result = a + b; break;
-          case 'subtract': result = a - b; break;
-          case 'multiply': result = a * b; break;
-          case 'divide': result = b !== 0 ? a / b : 'Error: Division by zero'; break;
-          default: throw new Error('Invalid operation');
+    case 'echo':
+      return {
+        jsonrpc: '2.0',
+        id,
+        result: { content: [{ type: 'text', text: `Echo: ${args.message}` }] }
+      };
+
+    case 'get_server_info':
+      return {
+        jsonrpc: '2.0',
+        id,
+        result: {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              server: 'Ultimate MCP Server',
+              version: '1.0.0',
+              protocol: '2025-03-26',
+              tools: Array.from(this.tools.keys()),
+              resources: Array.from(this.resources.keys()),
+              clients: this.clients.size
+            }, null, 2)
+          }]
         }
-        return {
-          jsonrpc: '2.0',
-          id,
-          result: { content: [{ type: 'text', text: `${a} ${operation} ${b} = ${result}` }] }
-        };
-      
-      default:
-        return {
-          jsonrpc: '2.0',
-          id,
-          error: { code: -32603, message: 'Tool execution failed' }
-        };
+      };
+
+    case 'calculate':
+      const { operation, a, b } = args;
+      let result;
+      switch (operation) {
+      case 'add': result = a + b; break;
+      case 'subtract': result = a - b; break;
+      case 'multiply': result = a * b; break;
+      case 'divide': result = b !== 0 ? a / b : 'Error: Division by zero'; break;
+      default: throw new Error('Invalid operation');
+      }
+      return {
+        jsonrpc: '2.0',
+        id,
+        result: { content: [{ type: 'text', text: `${a} ${operation} ${b} = ${result}` }] }
+      };
+
+    default:
+      return {
+        jsonrpc: '2.0',
+        id,
+        error: { code: -32603, message: 'Tool execution failed' }
+      };
     }
   }
 }
@@ -235,10 +235,10 @@ const app = express();
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+      defaultSrc: ['\'self\''],
+      scriptSrc: ['\'self\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\''],
+      imgSrc: ['\'self\'', 'data:', 'https:'],
     },
   },
   hsts: { maxAge: 31536000, includeSubDomains: true, preload: true }
@@ -277,7 +277,7 @@ const server = createServer(app);
 
 // Create MCP WebSocket server
 const mcpServer = new MCPWebSocketServer();
-const wss = new WebSocketServer({ 
+const wss = new WebSocketServer({
   server,
   path: '/mcp',
   verifyClient: (info) => {
@@ -290,16 +290,16 @@ const wss = new WebSocketServer({
 wss.on('connection', (ws, req) => {
   const clientId = uuidv4();
   mcpServer.clients.set(clientId, { ws, connectedAt: Date.now() });
-  
+
   console.log(`📱 MCP Client connected: ${clientId} (${mcpServer.clients.size} total)`);
 
   ws.on('message', async (data) => {
     try {
       const message = JSON.parse(data.toString());
-      
+
       // Validate JSON-RPC structure
       const schemas = mcpServer.getValidationSchemas();
-      
+
       if (message.method === 'initialize') {
         const { error } = schemas.initialize.validate(message);
         if (error) {
@@ -314,7 +314,7 @@ wss.on('connection', (ws, req) => {
 
       const response = await mcpServer.handleMCPMethod(message.method, message.params, message.id);
       ws.send(JSON.stringify(response));
-      
+
     } catch (error) {
       console.error('❌ MCP Message error:', error);
       ws.send(JSON.stringify({

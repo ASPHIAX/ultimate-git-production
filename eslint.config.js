@@ -25,12 +25,12 @@ export default [
     rules: {
       // Security Rules (Enterprise Critical)
       'no-eval': 'error',
-      'no-implied-eval': 'error', 
+      'no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-script-url': 'error',
       'no-unsafe-finally': 'error',
       'no-unsafe-negation': 'error',
-      
+
       // Complexity Management (Enterprise Scale)
       'complexity': ['error', 10],
       'max-depth': ['error', 4],
@@ -38,7 +38,7 @@ export default [
       'max-lines-per-function': ['error', 50],
       'max-params': ['error', 5],
       'max-statements': ['error', 20],
-      
+
       // Code Quality (Zero Tolerance)
       'no-magic-numbers': ['warn', { ignore: [0, 1, -1, 2] }],
       'prefer-const': 'error',
@@ -48,18 +48,18 @@ export default [
       'no-debugger': 'error',
       'no-alert': 'error',
       'curly': 'error',
-      
-      // Style Consistency 
+
+      // Style Consistency
       'brace-style': ['error', '1tbs'],
       'indent': ['error', 2],
       'quotes': ['error', 'single'],
       'semi': ['error', 'always'],
       'no-trailing-spaces': 'error',
       'eol-last': 'error',
-      
+
       // Error Prevention
       'no-unused-vars': 'error',
-      'no-undef': 'error', 
+      'no-undef': 'error',
       'no-unreachable': 'error',
       'no-duplicate-imports': 'error',
       'no-self-compare': 'error'
