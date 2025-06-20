@@ -28,7 +28,7 @@
     "postinstall": "echo \"Installation completed successfully\"",
     "validate:size": "node scripts/validate-file-size.js src/",
     "validate:all": "npm run lint && npm run validate:size && npm run security:audit",
-    "prepare": "node -e \"if (require(\"fs\").existsSync(\".git\") && !process.env.DOCKER_BUILD) { require(\"child_process\").execSync(\"npx husky\", {stdio: \"inherit\"}); }\"",
+    "prepare": "node -e \"const fs=require(\"fs\");const cp=require(\"child_process\");if(fs.existsSync(\".git\")&&!process.env.DOCKER_BUILD){try{console.log(\"Setting up husky git hooks...\");cp.execSync(\"npx husky\",{stdio:\"inherit\"});console.log(\"✅ Husky setup complete\");}catch(e){console.log(\"⚠️ Husky setup failed:\",e.message);if(process.env.CI){console.log(\"Continuing CI build without git hooks\");}else{throw e;}}}else{console.log(\"Skipping husky setup:\",process.env.DOCKER_BUILD?\"Docker build\":\"No git directory\");}\"",
     "pre-commit": "lint-staged",
     "validate-files": "node scripts/validate-file-size.js"
   },
