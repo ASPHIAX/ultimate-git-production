@@ -1,0 +1,33 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install build dependencies for native modules
+RUN apk add --no-cache python3 py3-pip make g++
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies (using npm install for development builds)
+RUN npm install --omit=dev
+
+# Clean up build dependencies to reduce image size
+RUN apk del python3 py3-pip make g++
+
+# Copy source code
+COPY . .
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
+RUN chown -R nodejs:nodejs /app
+USER nodejs
+
+# Expose ports
+EXPOSE 3000 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+# Start the server
+CMD ["npm", "start"]
