@@ -67,11 +67,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ASPHIAX/MASTER-CONTAINER-MCP.git"
+    "url": "https://github.com/ASPHIAX/ultimate-git-production.git"
   },
-  "homepage": "https://github.com/ASPHIAX/MASTER-CONTAINER-MCP#readme",
+  "homepage": "https://github.com/ASPHIAX/ultimate-git-production#readme",
   "bugs": {
-    "url": "https://github.com/ASPHIAX/MASTER-CONTAINER-MCP/issues"
+    "url": "https://github.com/ASPHIAX/ultimate-git-production/issues"
   },
   "author": "ASPHIAX",
   "license": "MIT",
